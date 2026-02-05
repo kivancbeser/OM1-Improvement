@@ -1,5 +1,4 @@
 import threading
-import pytest
 from src.providers.singleton import singleton
 
 def test_singleton_basic_functionality():
