@@ -1,5 +1,7 @@
 import threading
-from src.providers.singleton import singleton
+import time
+
+from providers.singleton import singleton
 
 
 def test_singleton_basic_functionality():
@@ -24,11 +26,9 @@ def test_singleton_reset():
         pass
 
     log1 = Logger()
-    # Reset the singleton instance
-    Logger.reset()
+    Logger.reset()  # type: ignore
     log2 = Logger()
 
-    # After reset, the instances must be different
     assert log1 is not log2
 
 
@@ -38,9 +38,6 @@ def test_singleton_thread_safety():
     @singleton
     class SharedResource:
         def __init__(self):
-            import time
-
-            # Small delay to increase the chance of a race condition
             time.sleep(0.01)
 
     instances = []
@@ -48,14 +45,12 @@ def test_singleton_thread_safety():
     def create_instance():
         instances.append(SharedResource())
 
-    # Create 10 threads to attempt instance creation simultaneously
     threads = [threading.Thread(target=create_instance) for _ in range(10)]
     for t in threads:
         t.start()
     for t in threads:
         t.join()
 
-    # All threads should have received the exact same instance
     first_instance = instances[0]
     for inst in instances:
         assert inst is first_instance
